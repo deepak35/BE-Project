@@ -1,0 +1,84 @@
+import nltk
+from nltk.corpus import stopwords
+import string
+import time
+import csv
+
+def preprocessor(r) :
+
+	#remove puctuation
+	table = string.maketrans("", "")
+	row = r.translate(table, string.punctuation)
+
+	#tokenize each word
+	row_words = nltk.word_tokenize(row)
+	i = 0
+
+	#normalize each word (convert to lower case)
+	for token in row_words:
+		row_words[i] = token.lower()
+		i += 1
+
+	#Remove stopwords
+	row_refined = [token for token in row_words if (not token in stopwords.words('english'))]
+
+	#Stemming
+	porter = nltk.PorterStemmer()
+	i = 0
+
+	for token in row_refined:
+		row_refined[i] = porter.stem(token.decode('utf-8'))
+		i += 1
+
+	#Lemmatization
+	lemmatizer = nltk.stem.wordnet.WordNetLemmatizer()
+	i = 0
+	for token in row_refined:
+		row_refined[i] = lemmatizer.lemmatize(token)
+		i += 1
+			
+	#Create string using the tokens and write it into output file
+	r = ""
+	for token in row_refined:
+		r = r + token + " "
+	r = r.strip(" ")
+
+	return r.encode('utf-8')
+
+
+
+start_time = time.time()
+print "Preprocessing started at : " + str (start_time)
+
+#r = "It's a nice day. Let's play football today!. How are you?"
+"""with open('../datasets/ShuffledRefinedDataset.csv', 'rb') as inp, open ('../datasets/Processed.csv','wb') as out:
+	data = csv.reader(inp)
+	j = 0
+	writer = csv.writer(out)
+	for record in data:
+		if not j:
+			writer.writerow(record)
+			#print j
+		else :
+			
+			record[5] = preprocessor(record[5])
+			writer.writerow(record)
+			#print "Hi"
+
+		#if j == 2:
+			#break
+
+		j+=1
+
+#print row_refined
+
+"""
+with open ('datasets/ShuffledRefinedDataset.csv', 'rb') as inp :
+	data = csv.reader(inp)
+	datalist = list(data)
+	print datalist[22242][5]
+	print preprocessor(datalist[22242][5])
+"""
+
+print "Preprocessing done at : " + str(time.time())
+print "Total time taken : " + str(time.time() - start_time)
