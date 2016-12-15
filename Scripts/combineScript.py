@@ -73,7 +73,7 @@ for i in range (1,7):
 			row[5] = re.sub('[X]+', '', row[5])
 			row[5] = re.sub('[\*]+', '', row[5])
 			row[5] = re.sub('[/]+', '', row[5])
-			row[5] = preprocess.text_preprocessing(row[5])
+			row[5] = text_preprocessing(row[5])
 
 			writer.writerow(row)
 	header = False
